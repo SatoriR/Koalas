@@ -10,3 +10,5 @@ From this data I wanted to get a general idea of what's causing harm to the Koal
 ## How to Use
 
 This code uses the prettydoc package which can be found here https://prettydoc.statr.me/ and installed by typing "install.package("prettydoc")" without the quotation marks. Please install and run this package before knitting the code or else it won't work.
+
+The data has been cleaned of duplicates for you but there are other issues with the data that are described in the document.
