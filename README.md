@@ -1,6 +1,6 @@
 # Koalas
 
-I've always thought that Koalas are fascinating animals. Unfortunately their population has declined nearly 45% since 1960, falling from 600,000 to nearly 330,000 according to numerous. 
+I've always thought that Koalas are fascinating animals. Unfortunately their population has declined nearly 45% since 1960, falling from 600,000 to nearly 330,000 according to numerous foundations. 
 This is extremely bad news as Koalas have a very slow rate of reproduction of merely 1, that's right, 1 baby koala also known as a joey every 2 years. 
 
 The goal of this project was to find a data source that has information about Koalas and what's contributing to their population decline. The best source that I could find was https://www.data.qld.gov.au/dataset/koala-hospital-data 
