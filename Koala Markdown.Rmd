@@ -9,8 +9,8 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-library(tidyverse) #
-library(prettydoc) # 
+library(tidyverse)
+library(prettydoc)
 library(plotly)
 
 # Read in the data
@@ -20,12 +20,12 @@ koala <- read.csv("~/R Projects/Koala Data Analysis/koalabase-1996-2019.csv")
 koala[koala == "" | koala == " "] <- NA # Turn blank rows into NA rows
 
 koala <- koala %>% 
-  mutate_if(is.character, str_to_lower) %>% # Change all character columns to be lower cased
+  mutate_if(is.character, str_to_lower) %>% # Change all character columns to be lower case, will make data wrangling easier in the long run
   mutate_if(is.character, str_trim)
 
 koala <- tidyr::separate(koala,
                          Call.Date,
-                         c('month', 'day', 'year'), sep = "/", remove = FALSE)
+                         c('month', 'day', 'year'), sep = "/", remove = FALSE) # Break up the Call.Date into 3 separate columns for filtering purposes
 
 
 # Create charts
@@ -112,7 +112,7 @@ koalas.suburb.gg <- koala %>%
 
 [**Koala Hospital Data**](https://www.data.qld.gov.au/dataset/koala-hospital-data) which is from the Queensland Government's Open Data Portal. It contains raw data from the KoalaBase koala records database which is from the Department of Environment and Science. The data is from July 1996 and spans through December 2019.
 
-None of the 38 variables are defined. However, some of them are easy to interpret like Fall, Sick or Injured. Many of the variables are not such as Wasted or Animal Name. In addition to this, the data is messy with 745 Animal.Record.No's being duplicates.These were removed for continuity.
+None of the 41 variables are defined. However, some of them are easy to interpret like Fall, Sick or Injured. Many of the variables are not such as Wasted or Animal Name. In addition to this, the data is messy with 745 Animal.Record.No's being duplicates.These were removed for continuity.
 
 Animal name is a tricky one since it seems that the fate of each koala was placed inside that column as well as the koala's name.
 
