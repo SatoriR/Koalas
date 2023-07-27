@@ -1,0 +1,146 @@
+---
+title: "Queensland Australia Koala Data Analysis"
+author: 
+date: "`r Sys.Date()`"
+output:
+  prettydoc::html_pretty:
+    theme: tactile
+    highlight: github
+---
+
+```{r setup, include=FALSE}
+library(tidyverse) #
+library(prettydoc) # 
+library(plotly)
+
+# Read in the data
+koala <- read.csv("~/R Projects/Koala Data Analysis/koalabase-1996-2019.csv")
+
+# Clean the data
+koala[koala == "" | koala == " "] <- NA # Turn blank rows into NA rows
+
+koala <- koala %>% 
+  mutate_if(is.character, str_to_lower) %>% # Change all character columns to be lower cased
+  mutate_if(is.character, str_trim)
+
+koala <- tidyr::separate(koala,
+                         Call.Date,
+                         c('month', 'day', 'year'), sep = "/", remove = FALSE)
+
+
+# Create charts
+koalas.helped <- koala %>%
+  count(year) %>%
+  plot_ly(
+    x = ~year,
+    y = ~n,
+    type = 'bar'
+  ) %>%
+  layout(title="Koalas Helped Every Year", 
+         xaxis = list(title = 'Year'), 
+         yaxis = list(title = 'Koalas Helped'))
+
+koalas.suburb <- koala %>%
+  filter(Koala.Suburb != "NA") %>% # Filter out the NA results
+  group_by(Koala.Suburb) %>%
+  count() %>%
+  arrange(desc(n)) %>%
+  head(3) %>%
+  plot_ly(
+    x = ~Koala.Suburb,
+    y = ~n,
+    type = 'bar'
+  ) %>%
+  layout(title = "Most Common Suburbs", 
+         xaxis = list(title = 'Suburb'), 
+         yaxis = list(title = 'Koalas Helped'))
+
+koalas.release.suburb <- koala %>%
+  filter(Release.Suburb != "NA") %>%
+  group_by(Release.Suburb) %>%
+  count() %>%
+  arrange(desc(n)) %>%
+  head(3) %>%
+  plot_ly(
+    x = ~Release.Suburb,
+    y = ~n,
+    type = 'bar'
+  ) %>%
+  layout(title = "Most Common Release Suburbs",
+         xaxis = list(title = "Release Suburb"),
+         yaxis = list(title = "Koalas Helped"))
+
+attacked.by.dogs <- koala %>%
+  select(Caused.By.Dog, Koala.Suburb) %>%
+  filter(Caused.By.Dog == "TRUE", Koala.Suburb != "NA") %>%
+  group_by(Koala.Suburb) %>%
+  count() %>%
+  arrange(desc(n)) %>%
+  head(3) %>%
+  plot_ly(
+    x = ~Koala.Suburb,
+    y = ~n,
+    type = 'bar'
+  ) %>%
+  layout(title = "Top 3 Most Dangerous Suburbs for Dog Attacks",
+         xaxis = list(title = "Koala Suburb"),
+         yaxis = list(title = "Koalas Attacked by Dogs"))
+
+
+koalas.helped.gg <- koala %>%
+  count(year) %>%
+  ggplot(aes(year, n)) +
+  geom_col() +
+  labs(title = "Koalas Helped Each Year") +
+  xlab("Year") +
+  ylab("Koalas Helped")
+
+koalas.suburb.gg <- koala %>%
+  filter(Koala.Suburb != "NA") %>% # Filter out the NA results
+  group_by(Koala.Suburb) %>%
+  count() %>%
+  arrange(desc(n)) %>%
+  head(3) %>%
+  ggplot(aes(Koala.Suburb, n)) +
+  geom_col()  +
+  labs(title = "Top 3 Suburbs") +
+  xlab("Suburb") +
+  ylab("Koalas Helped")
+```
+
+## What is the data that's being looked at?
+
+[**Koala Hospital Data**](https://www.data.qld.gov.au/dataset/koala-hospital-data) which is from the Queensland Government's Open Data Portal. It contains raw data from the KoalaBase koala records database which is from the Department of Environment and Science. The data is from July 1996 and spans through December 2019.
+
+None of the 38 variables are defined. However, some of them are easy to interpret like Fall, Sick or Injured. Many of the variables are not such as Wasted or Animal Name. In addition to this, the data is messy with 745 Animal.Record.No's being duplicates.These were removed for continuity.
+
+Animal name is a tricky one since it seems that the fate of each koala was placed inside that column as well as the koala's name.
+
+## What will be explored in this analysis?
+
+`Total Koalas Helped Every Year:` How many koalas were helped since 1996. </br>
+`Most Common SuburbS:` The top 3 most common suburbs in which koalas were found in. </br>
+`Most Common Release Suburb:` The most common suburb in which koalas were released into. </br>
+`Amount of Koalas Attacked by Dogs:` How many koalas were attacked by dogs? Where did the most attacks happen?
+
+## Exploratory Data Analysis of the variables discussed above
+
+The graph below looks at how many koalas were helped per year. As you can see the data distribution looks to be fairly normal throughout.
+```{r fig.width=9, fig.height=3, fig.align='center', echo=FALSE}
+koalas.helped 
+``` 
+
+There are a total of 947 suburbs and the 3 most common suburbs where Koalas were helped were Petrie, Capalaba and Kallangur.
+```{r fig.width=9, fig.height=3, fig.align='center', echo=FALSE}
+koalas.suburb
+```
+
+There are a total of 376 release suburbs and the 3 most common where Koalas were released were Cleveland, Kallangur and Petrie. 
+```{r fig.width=9, fig.height=3, fig.align='center', echo=FALSE}
+koalas.release.suburb
+```
+
+There are a total of 3,146 dog attacks accounting for roughly 6.18% of all entries into KoalaBase. The 3 most common where Koalas were attacked were Capalaba, Kallangur and Petrie.
+```{r fig.width=9, fig.height=3, fig.align='center', echo=FALSE}
+attacked.by.dogs
+```
